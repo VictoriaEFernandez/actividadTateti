@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Especifica el tipo de documento como HTML5 -->
+    <meta charset="UTF-8">
+    <!-- Asegura que el diseño sea receptivo en pantallas móviles -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Título del juego en la pestaña del navegador -->
+    <title>Tatetí</title>
+    <!-- Estilos para el tablero del Tatetí -->
+    <style>
+        /* Define el tablero como una cuadrícula de 3x3 */
+        #tablero {
+            display: grid;
+            grid-template-columns: repeat(3, 100px); /* Tres columnas de 100px cada una */
+            grid-template-rows: repeat(3, 100px);    /* Tres filas de 100px cada una */
+            gap: 5px;                               /* Espacio entre las celdas */
+        }
+
+        /* Estilos de cada celda del tablero */
+        .celda {
+            width: 100px;
+            height: 100px;
+            background-color: aqua;             /* Fondo azul claro */
+            display: flex;
+            justify-content: center;                 /* Centra el contenido horizontalmente */
+            align-items: center;                     /* Centra el contenido verticalmente */
+            font-size: 40px;                         /* Tamaño de fuente grande para X y O */
+            cursor: pointer;                         /* Cambia el cursor a "puntero" al pasar por encima */
+        }
+
+        /* Estilo para el título del juego */
+        h1 {
+            font-family: Verdana, Geneva, Tahoma, sans-serif; /* Fuente personalizada */
+            font-size: 50px;                                 /* Tamaño de la fuente del título */
+            color: blue;                                     /* Color azul para el título */
+        }
+    </style>
+</head>
+<body>
+    <!-- Título visible del juego -->
+    <h1>Juego Tatetí</h1>
+    <!-- Contenedor del tablero donde se generarán las celdas dinámicamente -->
+    <div id="tablero"></div>
+
+    <!-- Código JavaScript que controla la lógica del juego -->
+    <script>
+        // Selecciona el div donde irá el tablero
+        const tablero = document.getElementById('tablero');
+        // Variable que almacena de quién es el turno ('X' o 'O')
+        let turno = 'X';
+        // Array que guarda el estado de cada celda (vacía, 'X' o 'O')
+        const celdas = Array(9).fill(null);
+
+        // Función que crea el tablero al inicio del juego
+        function crearTablero() {
+            // Genera 9 celdas (una para cada posición del tablero)
+            for (let i = 0; i < 9; i++) {
+                // Crea un nuevo div para cada celda
+                const celda = document.createElement('div');
+                // Añade la clase 'celda' al div creado
+                celda.classList.add('celda');
+                // Añade un evento que escucha los clics en la celda y realiza un movimiento
+                celda.addEventListener('click', () => hacerMovimiento(i));
+                // Agrega la celda al tablero
+                tablero.appendChild(celda);
+            }
+        }
+
+        // Función que maneja el movimiento cuando un jugador hace clic en una celda
+        function hacerMovimiento(i) {
+            // Solo permite hacer el movimiento si la celda está vacía
+            if (!celdas[i]) {
+                // Actualiza el estado de la celda con el turno actual (X o O)
+                celdas[i] = turno;
+                // Actualiza visualmente el tablero antes de verificar el ganador o empate
+                actualizarTablero();
+                // Verifica si el jugador actual ha ganado después del movimiento
+                if (verificarGanador()) {
+                    // Muestra una alerta con el ganador y reinicia el juego después de un breve retardo
+                    setTimeout(() => alert(`${turno} gana!`), 200);
+                    resetearJuego();
+                } else if (celdasLlenas()) {
+                    // Verifica si todas las celdas están llenas y no hay ganador (empate)
+                    setTimeout(() => alert('No hay ganador, juego finalizado'), 200);
+                    resetearJuego();
+                } else {
+                    // Cambia el turno: si es 'X', pasa a 'O', y viceversa
+                    turno = turno === 'X' ? 'O' : 'X';
+                }
+            }
+        }
+
+        // Función que actualiza el contenido del tablero visualmente
+        function actualizarTablero() {
+            // Selecciona todas las celdas del tablero
+            const celdasHTML = document.querySelectorAll('.celda');
+            // Actualiza cada celda con el valor que está en el array 'celdas' ('X', 'O' o vacío)
+            celdas.forEach((valor, i) => {
+                celdasHTML[i].textContent = valor;
+            });
+        }
+
+        // Función que verifica si hay un ganador después de cada movimiento
+        function verificarGanador() {
+            // Define todas las combinaciones ganadoras posibles (líneas horizontales, verticales y diagonales)
+            const combinacionesGanadoras = [
+                [0, 1, 2],  // Primera fila
+                [3, 4, 5],  // Segunda fila
+                [6, 7, 8],  // Tercera fila
+                [0, 3, 6],  // Primera columna
+                [1, 4, 7],  // Segunda columna
+                [2, 5, 8],  // Tercera columna
+                [0, 4, 8],  // Diagonal de izquierda a derecha
+                [2, 4, 6],  // Diagonal de derecha a izquierda
+            ];
+            // Verifica si alguna combinación ganadora contiene el mismo valor ('X' o 'O')
+            return combinacionesGanadoras.some(combinacion => {
+                const [a, b, c] = combinacion;
+                // Devuelve true si las tres celdas de la combinación son iguales y no están vacías
+                return celdas[a] && celdas[a] === celdas[b] && celdas[a] === celdas[c];
+            });
+        }
+
+        // Función que verifica si todas las celdas están llenas (empate)
+        function celdasLlenas() {
+            // Devuelve true si todas las celdas del array están llenas (sin 'null')
+            return celdas.every(celda => celda !== null);
+        }
+
+        // Función que resetea el juego, vaciando el tablero y reiniciando el turno
+        function resetearJuego() {
+            // Vuelve a poner el array 'celdas' en su estado original (todas vacías)
+            celdas.fill(null);
+            // El turno vuelve a empezar con 'X'
+            turno = 'X';
+            // Actualiza el tablero para reflejar los cambios
+            actualizarTablero();
+        }
+
+        // Llama a la función para crear el tablero cuando la página se carga
+        crearTablero();
+    </script>
+</body>
+</html>
