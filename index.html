@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tatetí Mejorado</title>
+    <title>TA-TE-TI</title>
     <style>
+        /* Estilos generales para el cuerpo de la página */
         body {
             font-family: 'Arial', sans-serif;
             display: flex;
@@ -13,66 +14,73 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background-color: #f0f0f0; /* Color de fondo suave */
         }
 
+        /* Estilo para el título del juego */
         h1 {
-            font-size: 50px;
-            color: #2c3e50;
-            margin-bottom: 20px;
+            font-size: 50px; /* Tamaño del texto del título */
+            color: #2c3e50; /* Color del título */
+            margin-bottom: 20px; /* Espacio debajo del título */
         }
 
+        /* Estilo para el tablero de juego */
         #tablero {
-            display: grid;
-            grid-template-columns: repeat(3, 100px);
-            grid-template-rows: repeat(3, 100px);
-            gap: 5px;
-            margin-bottom: 20px;
+            display: grid; /* Usamos grid para el diseño del tablero */
+            grid-template-columns: repeat(3, 100px); /* Tres columnas de 100px */
+            grid-template-rows: repeat(3, 100px); /* Tres filas de 100px */
+            gap: 5px; /* Espacio entre las celdas */
+            margin-bottom: 20px; /* Espacio debajo del tablero */
         }
 
+        /* Estilo para cada celda del tablero */
         .celda {
-            width: 100px;
-            height: 100px;
-            background-color: #3498db;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 40px;
-            cursor: pointer;
-            color: #fff;
-            border-radius: 10px;
-            transition: background-color 0.3s;
+            width: 100px; /* Ancho de cada celda */
+            height: 100px; /* Altura de cada celda */
+            background-color: #3498db; /* Color de fondo de las celdas */
+            display: flex; /* Usamos flex para centrar el contenido */
+            justify-content: center; /* Centra horizontalmente el contenido */
+            align-items: center; /* Centra verticalmente el contenido */
+            font-size: 40px; /* Tamaño del texto en las celdas */
+            cursor: pointer; /* Cambia el cursor al pasar por encima */
+            color: #fff; /* Color del texto */
+            border-radius: 10px; /* Bordes redondeados */
+            transition: background-color 0.3s; /* Transición suave para el cambio de color */
         }
 
+        /* Estilo para el efecto hover de las celdas */
         .celda:hover {
-            background-color: #2980b9;
+            background-color: #2980b9; /* Color al pasar el mouse sobre la celda */
         }
 
+        /* Estilo para el mensaje de estado del juego */
         #mensaje {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #2c3e50;
+            font-size: 24px; /* Tamaño del texto del mensaje */
+            margin-bottom: 20px; /* Espacio debajo del mensaje */
+            color: #2c3e50; /* Color del mensaje */
         }
 
+        /* Estilo para los botones */
         button {
-            font-size: 18px;
-            padding: 10px 20px;
-            margin: 0 10px;
-            cursor: pointer;
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            font-size: 18px; /* Tamaño del texto del botón */
+            padding: 10px 20px; /* Relleno interno del botón */
+            margin: 0 10px; /* Espacio lateral entre botones */
+            cursor: pointer; /* Cambia el cursor al pasar por encima */
+            background-color: #2ecc71; /* Color de fondo del botón */
+            color: white; /* Color del texto del botón */
+            border: none; /* Sin borde */
+            border-radius: 5px; /* Bordes redondeados */
+            transition: background-color 0.3s; /* Transición suave para el cambio de color */
         }
 
+        /* Estilo para el efecto hover de los botones */
         button:hover {
-            background-color: #27ae60;
+            background-color: #27ae60; /* Color al pasar el mouse sobre el botón */
         }
     </style>
 </head>
 <body>
-    <h1>Juego Tatetí</h1>
+    <h1>TA-TE-TI</h1>
     <div id="mensaje"></div>
     <div id="tablero"></div>
     <div>
@@ -81,58 +89,62 @@
     </div>
 
     <script>
+        // Seleccionamos los elementos del DOM
         const tablero = document.getElementById('tablero');
         const mensaje = document.getElementById('mensaje');
         const btnComenzar = document.getElementById('comenzar');
         const btnReiniciar = document.getElementById('reiniciar');
-        let turno = 'X';
-        let celdas = Array(9).fill(null);
-        let juegoActivo = false;
+        
+        // Variables para gestionar el estado del juego
+        let turno = 'X'; // El jugador que comienza
+        let celdas = Array(9).fill(null); // Estado inicial de las celdas del tablero
+        let juegoActivo = false; // Indica si el juego está activo
 
         // Función que crea el tablero al inicio del juego
         function crearTablero() {
-            tablero.innerHTML = '';
+            tablero.innerHTML = ''; // Limpiar el tablero existente
             for (let i = 0; i < 9; i++) {
-                const celda = document.createElement('div');
-                celda.classList.add('celda');
-                celda.addEventListener('click', () => hacerMovimiento(i));
-                tablero.appendChild(celda);
+                const celda = document.createElement('div'); // Crear una nueva celda
+                celda.classList.add('celda'); // Agregar clase a la celda
+                celda.addEventListener('click', () => hacerMovimiento(i)); // Añadir evento de clic
+                tablero.appendChild(celda); // Agregar la celda al tablero
             }
         }
 
         // Función que maneja el movimiento cuando un jugador hace clic en una celda
         function hacerMovimiento(i) {
-            if (!juegoActivo) return;
-            if (!celdas[i]) {
-                celdas[i] = turno;
-                actualizarTablero();
-                if (verificarGanador()) {
-                    mensaje.textContent = `¡${turno} gana!`;
-                    juegoActivo = false;
-                } else if (celdasLlenas()) {
-                    mensaje.textContent = '¡Empate!';
-                    juegoActivo = false;
+            if (!juegoActivo) return; // Si el juego no está activo, salir
+            if (!celdas[i]) { // Si la celda está vacía
+                celdas[i] = turno; // Asignar el turno actual a la celda
+                actualizarTablero(); // Actualizar la visualización del tablero
+                if (verificarGanador()) { // Verificar si hay un ganador
+                    mensaje.textContent = `¡${turno} gana!`; // Mostrar mensaje de victoria
+                    juegoActivo = false; // Terminar el juego
+                } else if (celdasLlenas()) { // Verificar si hay empate
+                    mensaje.textContent = '¡Empate!'; // Mostrar mensaje de empate
+                    juegoActivo = false; // Terminar el juego
                 } else {
-                    cambiarTurno();
+                    cambiarTurno(); // Cambiar el turno al siguiente jugador
                 }
             }
         }
 
         // Función que actualiza el contenido del tablero visualmente
         function actualizarTablero() {
-            const celdasHTML = document.querySelectorAll('.celda');
+            const celdasHTML = document.querySelectorAll('.celda'); // Seleccionar todas las celdas
             celdas.forEach((valor, i) => {
-                celdasHTML[i].textContent = valor;
+                celdasHTML[i].textContent = valor; // Actualizar el texto de cada celda
             });
         }
 
         // Función que verifica si hay un ganador después de cada movimiento
         function verificarGanador() {
             const combinacionesGanadoras = [
-                [0, 1, 2], [3, 4, 5], [6, 7, 8],
-                [0, 3, 6], [1, 4, 7], [2, 5, 8],
-                [0, 4, 8], [2, 4, 6]
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Filas
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columnas
+                [0, 4, 8], [2, 4, 6] // Diagonales
             ];
+            // Comprobar si alguna combinación ganadora tiene el mismo símbolo
             return combinacionesGanadoras.some(combinacion => {
                 const [a, b, c] = combinacion;
                 return celdas[a] && celdas[a] === celdas[b] && celdas[a] === celdas[c];
@@ -141,40 +153,42 @@
 
         // Función que verifica si todas las celdas están llenas (empate)
         function celdasLlenas() {
-            return celdas.every(celda => celda !== null);
+            return celdas.every(celda => celda !== null); // Retorna verdadero si todas las celdas están ocupadas
         }
 
         // Función que cambia el turno y actualiza el mensaje
         function cambiarTurno() {
+            // Cambiar el turno entre 'X' y 'O'
             turno = turno === 'X' ? 'O' : 'X';
-            mensaje.textContent = `Turno de ${turno}`;
+            mensaje.textContent = `Turno de ${turno}`; // Mostrar quién es el turno
         }
 
         // Función que asigna el turno inicial al azar
         function asignarTurnoInicial() {
+            // Asignar 'X' o 'O' al azar
             turno = Math.random() < 0.5 ? 'X' : 'O';
-            mensaje.textContent = `Comienza ${turno}`;
+            mensaje.textContent = `Comienza ${turno}`; // Mostrar quién comienza
         }
 
         // Función que reinicia el juego
         function reiniciarJuego() {
-            celdas.fill(null);
-            juegoActivo = true;
-            asignarTurnoInicial();
-            actualizarTablero();
+            celdas.fill(null); // Reiniciar el estado de las celdas
+            juegoActivo = true; // Activar el juego
+            asignarTurnoInicial(); // Asignar turno inicial
+            actualizarTablero(); // Actualizar la visualización del tablero
         }
 
         // Event listeners para los botones
         btnComenzar.addEventListener('click', () => {
-            reiniciarJuego();
+            reiniciarJuego(); // Reiniciar el juego al hacer clic en el botón "Comenzar Juego"
         });
 
         btnReiniciar.addEventListener('click', () => {
-            reiniciarJuego();
+            reiniciarJuego(); // Reiniciar el juego al hacer clic en el botón "Reiniciar Juego"
         });
 
-        // Crear el tablero inicial
+        // Crear el tablero inicial al cargar la página
         crearTablero();
-    </script>
-</body>
+    </script
+
 </html>
